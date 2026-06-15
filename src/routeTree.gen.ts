@@ -9,38 +9,198 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifikasiRouteImport } from './routes/verifikasi'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedArsipRouteImport } from './routes/_authenticated/arsip'
+import { Route as AuthenticatedPengajuanIndexRouteImport } from './routes/_authenticated/pengajuan/index'
+import { Route as AuthenticatedPetugasPengajuanRouteImport } from './routes/_authenticated/petugas/pengajuan'
+import { Route as AuthenticatedPengajuanBaruRouteImport } from './routes/_authenticated/pengajuan/baru'
+import { Route as AuthenticatedPengajuanIdRouteImport } from './routes/_authenticated/pengajuan/$id'
+import { Route as AuthenticatedAdminJenisSuratRouteImport } from './routes/_authenticated/admin/jenis-surat'
+import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
 
+const VerifikasiRoute = VerifikasiRouteImport.update({
+  id: '/verifikasi',
+  path: '/verifikasi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedArsipRoute = AuthenticatedArsipRouteImport.update({
+  id: '/arsip',
+  path: '/arsip',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedPengajuanIndexRoute =
+  AuthenticatedPengajuanIndexRouteImport.update({
+    id: '/pengajuan/',
+    path: '/pengajuan/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPetugasPengajuanRoute =
+  AuthenticatedPetugasPengajuanRouteImport.update({
+    id: '/petugas/pengajuan',
+    path: '/petugas/pengajuan',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPengajuanBaruRoute =
+  AuthenticatedPengajuanBaruRouteImport.update({
+    id: '/pengajuan/baru',
+    path: '/pengajuan/baru',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPengajuanIdRoute =
+  AuthenticatedPengajuanIdRouteImport.update({
+    id: '/pengajuan/$id',
+    path: '/pengajuan/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAdminJenisSuratRoute =
+  AuthenticatedAdminJenisSuratRouteImport.update({
+    id: '/admin/jenis-surat',
+    path: '/admin/jenis-surat',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
+  id: '/admin/audit',
+  path: '/admin/audit',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/arsip': typeof AuthenticatedArsipRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/jenis-surat': typeof AuthenticatedAdminJenisSuratRoute
+  '/pengajuan/$id': typeof AuthenticatedPengajuanIdRoute
+  '/pengajuan/baru': typeof AuthenticatedPengajuanBaruRoute
+  '/petugas/pengajuan': typeof AuthenticatedPetugasPengajuanRoute
+  '/pengajuan/': typeof AuthenticatedPengajuanIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/arsip': typeof AuthenticatedArsipRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/jenis-surat': typeof AuthenticatedAdminJenisSuratRoute
+  '/pengajuan/$id': typeof AuthenticatedPengajuanIdRoute
+  '/pengajuan/baru': typeof AuthenticatedPengajuanBaruRoute
+  '/petugas/pengajuan': typeof AuthenticatedPetugasPengajuanRoute
+  '/pengajuan': typeof AuthenticatedPengajuanIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/_authenticated/arsip': typeof AuthenticatedArsipRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/_authenticated/admin/jenis-surat': typeof AuthenticatedAdminJenisSuratRoute
+  '/_authenticated/pengajuan/$id': typeof AuthenticatedPengajuanIdRoute
+  '/_authenticated/pengajuan/baru': typeof AuthenticatedPengajuanBaruRoute
+  '/_authenticated/petugas/pengajuan': typeof AuthenticatedPetugasPengajuanRoute
+  '/_authenticated/pengajuan/': typeof AuthenticatedPengajuanIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/verifikasi'
+    | '/arsip'
+    | '/dashboard'
+    | '/admin/audit'
+    | '/admin/jenis-surat'
+    | '/pengajuan/$id'
+    | '/pengajuan/baru'
+    | '/petugas/pengajuan'
+    | '/pengajuan/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/verifikasi'
+    | '/arsip'
+    | '/dashboard'
+    | '/admin/audit'
+    | '/admin/jenis-surat'
+    | '/pengajuan/$id'
+    | '/pengajuan/baru'
+    | '/petugas/pengajuan'
+    | '/pengajuan'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/verifikasi'
+    | '/_authenticated/arsip'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/admin/audit'
+    | '/_authenticated/admin/jenis-surat'
+    | '/_authenticated/pengajuan/$id'
+    | '/_authenticated/pengajuan/baru'
+    | '/_authenticated/petugas/pengajuan'
+    | '/_authenticated/pengajuan/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  VerifikasiRoute: typeof VerifikasiRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verifikasi': {
+      id: '/verifikasi'
+      path: '/verifikasi'
+      fullPath: '/verifikasi'
+      preLoaderRoute: typeof VerifikasiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +208,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/arsip': {
+      id: '/_authenticated/arsip'
+      path: '/arsip'
+      fullPath: '/arsip'
+      preLoaderRoute: typeof AuthenticatedArsipRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/pengajuan/': {
+      id: '/_authenticated/pengajuan/'
+      path: '/pengajuan'
+      fullPath: '/pengajuan/'
+      preLoaderRoute: typeof AuthenticatedPengajuanIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/petugas/pengajuan': {
+      id: '/_authenticated/petugas/pengajuan'
+      path: '/petugas/pengajuan'
+      fullPath: '/petugas/pengajuan'
+      preLoaderRoute: typeof AuthenticatedPetugasPengajuanRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/pengajuan/baru': {
+      id: '/_authenticated/pengajuan/baru'
+      path: '/pengajuan/baru'
+      fullPath: '/pengajuan/baru'
+      preLoaderRoute: typeof AuthenticatedPengajuanBaruRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/pengajuan/$id': {
+      id: '/_authenticated/pengajuan/$id'
+      path: '/pengajuan/$id'
+      fullPath: '/pengajuan/$id'
+      preLoaderRoute: typeof AuthenticatedPengajuanIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin/jenis-surat': {
+      id: '/_authenticated/admin/jenis-surat'
+      path: '/admin/jenis-surat'
+      fullPath: '/admin/jenis-surat'
+      preLoaderRoute: typeof AuthenticatedAdminJenisSuratRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin/audit': {
+      id: '/_authenticated/admin/audit'
+      path: '/admin/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedArsipRoute: typeof AuthenticatedArsipRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
+  AuthenticatedAdminJenisSuratRoute: typeof AuthenticatedAdminJenisSuratRoute
+  AuthenticatedPengajuanIdRoute: typeof AuthenticatedPengajuanIdRoute
+  AuthenticatedPengajuanBaruRoute: typeof AuthenticatedPengajuanBaruRoute
+  AuthenticatedPetugasPengajuanRoute: typeof AuthenticatedPetugasPengajuanRoute
+  AuthenticatedPengajuanIndexRoute: typeof AuthenticatedPengajuanIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedArsipRoute: AuthenticatedArsipRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
+  AuthenticatedAdminJenisSuratRoute: AuthenticatedAdminJenisSuratRoute,
+  AuthenticatedPengajuanIdRoute: AuthenticatedPengajuanIdRoute,
+  AuthenticatedPengajuanBaruRoute: AuthenticatedPengajuanBaruRoute,
+  AuthenticatedPetugasPengajuanRoute: AuthenticatedPetugasPengajuanRoute,
+  AuthenticatedPengajuanIndexRoute: AuthenticatedPengajuanIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AuthRoute: AuthRoute,
+  VerifikasiRoute: VerifikasiRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
