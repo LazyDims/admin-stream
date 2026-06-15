@@ -21,13 +21,19 @@ function PetugasInbox() {
     queryFn: async () => {
       let qb = supabase
         .from("pengajuan_surat")
-        .select("id, nomor, status, keperluan, created_at, jenis_surat:jenis_surat_id(nama, kode), profiles:user_id(nama)")
+        .select("id, nomor, status, keperluan, created_at, user_id, jenis_surat:jenis_surat_id(nama, kode)")
         .order("created_at", { ascending: false });
       if (tab === "antrian") qb = qb.in("status", ["menunggu_verifikasi", "diproses"]);
       if (tab === "selesai") qb = qb.eq("status", "selesai");
       if (tab === "ditolak") qb = qb.eq("status", "ditolak");
       const { data } = await qb;
-      return data ?? [];
+      const list = data ?? [];
+      const ids = Array.from(new Set(list.map((r: any) => r.user_id)));
+      const { data: profs } = ids.length
+        ? await supabase.from("profiles").select("id, nama").in("id", ids)
+        : { data: [] as any[] };
+      const map = new Map((profs ?? []).map((p: any) => [p.id, p.nama]));
+      return list.map((r: any) => ({ ...r, profiles: { nama: map.get(r.user_id) ?? "-" } }));
     },
   });
 

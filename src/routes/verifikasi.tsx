@@ -32,13 +32,15 @@ function VerifikasiPage() {
     setLoading(true); setHasil(null);
     const { data, error } = await supabase
       .from("pengajuan_surat")
-      .select("nomor, status, hash_sha256, completed_at, created_at, qr_token, jenis_surat:jenis_surat_id(nama, kode), profiles:user_id(nama)")
+      .select("nomor, status, hash_sha256, completed_at, created_at, qr_token, user_id, jenis_surat:jenis_surat_id(nama, kode)")
       .or(`qr_token.eq.${t.trim()},nomor.eq.${t.trim()}`)
       .maybeSingle();
     setLoading(false);
     if (error || !data) { setHasil({ ok: false, msg: "Dokumen tidak ditemukan." }); return; }
-    if (data.status !== "selesai") { setHasil({ ok: false, data, msg: "Dokumen belum diterbitkan resmi." }); return; }
-    setHasil({ ok: true, data });
+    const { data: prof } = await supabase.from("profiles").select("nama").eq("id", data.user_id).maybeSingle();
+    const enriched: any = { ...data, profiles: prof };
+    if (data.status !== "selesai") { setHasil({ ok: false, data: enriched, msg: "Dokumen belum diterbitkan resmi." }); return; }
+    setHasil({ ok: true, data: enriched });
   };
 
   useEffect(() => { if (search.token) cek(search.token); }, [search.token]);
