@@ -28,11 +28,13 @@ function PengajuanDetail() {
     queryFn: async () => {
       const { data: p, error } = await supabase
         .from("pengajuan_surat")
-        .select("*, jenis_surat:jenis_surat_id(*), profiles:user_id(nama, nik, alamat, no_hp, email)")
+        .select("*, jenis_surat:jenis_surat_id(*)")
         .eq("id", id).single();
       if (error) throw error;
+      const { data: prof } = await supabase
+        .from("profiles").select("nama, nik, alamat, no_hp, email").eq("id", p.user_id).maybeSingle();
       const { data: dok } = await supabase.from("dokumen_persyaratan").select("*").eq("pengajuan_id", id);
-      return { p, dok: dok ?? [] };
+      return { p: { ...p, profiles: prof }, dok: dok ?? [] };
     },
   });
 
@@ -46,7 +48,7 @@ function PengajuanDetail() {
       const content = `${data.p.nomor}|${data.p.jenis_surat?.kode}|${data.p.user_id}|${data.p.created_at}`;
       patch.hash_sha256 = await sha256(content);
     }
-    const { error } = await supabase.from("pengajuan_surat").update(patch).eq("id", id);
+    const { error } = await supabase.from("pengajuan_surat").update(patch as any).eq("id", id);
     if (error) { toast.error(error.message); setBusy(false); return; }
     await supabase.from("audit_logs").insert({
       user_id: user.id, action: `update_status_${status}`, entity: "pengajuan_surat", entity_id: id,
