@@ -19,6 +19,7 @@ import { Route as AuthenticatedPengajuanIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedPetugasPengajuanRouteImport } from './routes/_authenticated/petugas/pengajuan'
 import { Route as AuthenticatedPengajuanBaruRouteImport } from './routes/_authenticated/pengajuan/baru'
 import { Route as AuthenticatedPengajuanIdRouteImport } from './routes/_authenticated/pengajuan/$id'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminJenisSuratRouteImport } from './routes/_authenticated/admin/jenis-surat'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
 
@@ -75,6 +76,11 @@ const AuthenticatedPengajuanIdRoute =
     path: '/pengajuan/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAdminJenisSuratRoute =
   AuthenticatedAdminJenisSuratRouteImport.update({
     id: '/admin/jenis-surat',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/jenis-surat': typeof AuthenticatedAdminJenisSuratRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/pengajuan/$id': typeof AuthenticatedPengajuanIdRoute
   '/pengajuan/baru': typeof AuthenticatedPengajuanBaruRoute
   '/petugas/pengajuan': typeof AuthenticatedPetugasPengajuanRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/jenis-surat': typeof AuthenticatedAdminJenisSuratRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/pengajuan/$id': typeof AuthenticatedPengajuanIdRoute
   '/pengajuan/baru': typeof AuthenticatedPengajuanBaruRoute
   '/petugas/pengajuan': typeof AuthenticatedPetugasPengajuanRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/jenis-surat': typeof AuthenticatedAdminJenisSuratRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/pengajuan/$id': typeof AuthenticatedPengajuanIdRoute
   '/_authenticated/pengajuan/baru': typeof AuthenticatedPengajuanBaruRoute
   '/_authenticated/petugas/pengajuan': typeof AuthenticatedPetugasPengajuanRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/admin/audit'
     | '/admin/jenis-surat'
+    | '/admin/users'
     | '/pengajuan/$id'
     | '/pengajuan/baru'
     | '/petugas/pengajuan'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/admin/audit'
     | '/admin/jenis-surat'
+    | '/admin/users'
     | '/pengajuan/$id'
     | '/pengajuan/baru'
     | '/petugas/pengajuan'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/admin/audit'
     | '/_authenticated/admin/jenis-surat'
+    | '/_authenticated/admin/users'
     | '/_authenticated/pengajuan/$id'
     | '/_authenticated/pengajuan/baru'
     | '/_authenticated/petugas/pengajuan'
@@ -250,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPengajuanIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/jenis-surat': {
       id: '/_authenticated/admin/jenis-surat'
       path: '/admin/jenis-surat'
@@ -272,6 +291,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminJenisSuratRoute: typeof AuthenticatedAdminJenisSuratRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedPengajuanIdRoute: typeof AuthenticatedPengajuanIdRoute
   AuthenticatedPengajuanBaruRoute: typeof AuthenticatedPengajuanBaruRoute
   AuthenticatedPetugasPengajuanRoute: typeof AuthenticatedPetugasPengajuanRoute
@@ -283,6 +303,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
   AuthenticatedAdminJenisSuratRoute: AuthenticatedAdminJenisSuratRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedPengajuanIdRoute: AuthenticatedPengajuanIdRoute,
   AuthenticatedPengajuanBaruRoute: AuthenticatedPengajuanBaruRoute,
   AuthenticatedPetugasPengajuanRoute: AuthenticatedPetugasPengajuanRoute,
