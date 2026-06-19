@@ -1,0 +1,1 @@
+CREATE POLICY "Petugas dan admin baca semua profil" ON public.profiles FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'petugas') OR public.has_role(auth.uid(), 'admin'));
