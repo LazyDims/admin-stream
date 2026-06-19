@@ -38,64 +38,67 @@ function AuthPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Branding */}
-      <div className="relative hidden overflow-hidden bg-gradient-hero text-primary-foreground lg:block">
-        <div className="absolute inset-0 opacity-30" style={{
-          backgroundImage: "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3), transparent 40%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2), transparent 40%)",
+      <div className="relative hidden flex-col justify-between bg-primary p-12 text-primary-foreground lg:flex">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
+          backgroundSize: "20px 20px"
         }} />
-        <div className="relative flex h-full flex-col justify-between p-12">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-xl bg-white/15 backdrop-blur">
-              <BadgeCheck className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="font-display text-xl font-bold">SIPELAK</p>
-              <p className="text-xs text-primary-foreground/80">Pelayanan Administrasi Kecamatan</p>
-            </div>
-          </Link>
-          <div>
-            <h2 className="font-display text-4xl font-extrabold leading-tight">
-              Layanan kecamatan, kini di genggaman.
-            </h2>
-            <p className="mt-4 max-w-md text-primary-foreground/80">
-              Pengajuan surat lebih cepat, transparan, dan aman dengan verifikasi dokumen digital berbasis QR & SHA-256.
-            </p>
+        <Link to="/" className="relative flex items-center gap-3">
+          <div className="grid h-12 w-12 place-items-center rounded bg-white/10 shadow-subtle">
+            <BadgeCheck className="h-7 w-7" />
           </div>
-          <p className="text-sm text-primary-foreground/70">© SIPELAK — Mendukung E-Government Indonesia</p>
+          <div>
+            <p className="font-sans text-2xl font-bold tracking-tight">SIPELAK</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary-foreground/70">Sistem Informasi Kecamatan</p>
+          </div>
+        </Link>
+        <div className="relative">
+          <h2 className="font-sans text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
+            Modernisasi Pelayanan <br /> Publik Terpadu.
+          </h2>
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-primary-foreground/80">
+            Akses layanan mandiri untuk pengajuan berbagai jenis surat keterangan dengan sistem verifikasi digital yang aman dan transparan.
+          </p>
+        </div>
+        <div className="relative flex items-center gap-4 text-sm font-medium text-primary-foreground/60">
+          <p>© {new Date().getFullYear()} SIPELAK</p>
+          <span className="h-1 w-1 rounded-full bg-primary-foreground/30" />
+          <p>Mendukung E-Gov Indonesia</p>
         </div>
       </div>
 
       {/* Form */}
-      <div className="flex items-center justify-center p-6 sm:p-10">
+      <div className="flex items-center justify-center bg-background p-6 sm:p-10">
         <div className="w-full max-w-md">
-          <div className="mb-6 lg:hidden">
+          <div className="mb-10 lg:hidden">
             <Link to="/" className="flex items-center gap-2">
-              <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-hero text-primary-foreground">
-                <BadgeCheck className="h-5 w-5" />
+              <div className="grid h-10 w-10 place-items-center rounded bg-primary text-primary-foreground">
+                <BadgeCheck className="h-6 w-6" />
               </div>
-              <p className="font-display text-lg font-bold">SIPELAK</p>
+              <p className="font-sans text-xl font-bold tracking-tight">SIPELAK</p>
             </Link>
           </div>
 
-          <Tabs defaultValue="login">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Masuk</TabsTrigger>
-              <TabsTrigger value="register">Daftar</TabsTrigger>
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 rounded-md bg-secondary p-1">
+              <TabsTrigger value="login" className="rounded-sm font-bold data-[state=active]:bg-background data-[state=active]:shadow-subtle">MASUK</TabsTrigger>
+              <TabsTrigger value="register" className="rounded-sm font-bold data-[state=active]:bg-background data-[state=active]:shadow-subtle">DAFTAR</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="login">
-              <Card className="mt-4 border-border/60 p-6 shadow-soft">
+            <TabsContent value="login" className="mt-6">
+              <Card className="border-border p-8 shadow-subtle">
                 <LoginForm />
               </Card>
             </TabsContent>
-            <TabsContent value="register">
-              <Card className="mt-4 border-border/60 p-6 shadow-soft">
+            <TabsContent value="register" className="mt-6">
+              <Card className="border-border p-8 shadow-subtle">
                 <RegisterForm />
               </Card>
             </TabsContent>
           </Tabs>
 
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            Dengan masuk, Anda menyetujui kebijakan layanan SIPELAK.
+          <p className="mt-8 text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            Sistem Informasi Pelayanan Administrasi Kecamatan
           </p>
         </div>
       </div>
@@ -116,28 +119,30 @@ function LoginForm() {
     const { error } = await supabase.auth.signInWithPassword(p.data);
     setBusy(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Berhasil masuk");
+    toast.success("Berhasil masuk ke sistem");
     navigate({ to: "/dashboard" });
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    <form onSubmit={submit} className="space-y-6">
       <div>
-        <h2 className="font-display text-2xl font-bold">Selamat datang kembali</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Masuk untuk mengelola pengajuan Anda.</p>
+        <h2 className="font-sans text-2xl font-bold text-foreground">Akses Warga</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Silakan masuk menggunakan akun terdaftar.</p>
       </div>
-      <div>
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" autoComplete="email" value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="warga@email.com" />
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider">Alamat Email</Label>
+          <Input id="email" type="email" autoComplete="email" className="rounded-sm" value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="nama@email.com" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password" title="Kata Sandi" className="text-xs font-bold uppercase tracking-wider">Kata Sandi</Label>
+          <Input id="password" type="password" autoComplete="current-password" className="rounded-sm" value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })} />
+        </div>
       </div>
-      <div>
-        <Label htmlFor="password">Kata Sandi</Label>
-        <Input id="password" type="password" autoComplete="current-password" value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })} />
-      </div>
-      <Button type="submit" disabled={busy} className="w-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-95">
-        {busy && <Loader2 className="h-4 w-4 animate-spin" />} Masuk
+      <Button type="submit" disabled={busy} className="w-full bg-primary font-bold shadow-solid hover:bg-primary/95">
+        {busy && <Loader2 className="h-4 w-4 animate-spin" />} MASUK SEKARANG
       </Button>
     </form>
   );
@@ -161,32 +166,33 @@ function RegisterForm() {
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Akun berhasil dibuat. Silakan masuk.");
+    toast.success("Pendaftaran berhasil. Silakan cek email atau langsung masuk.");
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    <form onSubmit={submit} className="space-y-6">
       <div>
-        <h2 className="font-display text-2xl font-bold">Buat akun warga</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Daftar gratis untuk mengajukan surat secara online.</p>
+        <h2 className="font-sans text-2xl font-bold text-foreground">Registrasi Baru</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Lengkapi data diri untuk membuat akun warga.</p>
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="col-span-2"><Label>Nama Lengkap</Label>
-          <Input value={form.nama} onChange={(e) => setForm({ ...form, nama: e.target.value })} placeholder="Budi Santoso" /></div>
-        <div className="col-span-2"><Label>Email</Label>
-          <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="warga@email.com" /></div>
-        <div className="col-span-2"><Label>Kata Sandi</Label>
-          <Input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
-        <div><Label>NIK (16 digit)</Label>
-          <Input inputMode="numeric" value={form.nik} onChange={(e) => setForm({ ...form, nik: e.target.value })} /></div>
-        <div><Label>No. HP</Label>
-          <Input value={form.no_hp} onChange={(e) => setForm({ ...form, no_hp: e.target.value })} /></div>
-        <div className="col-span-2"><Label>Alamat</Label>
-          <Input value={form.alamat} onChange={(e) => setForm({ ...form, alamat: e.target.value })} /></div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="col-span-2 space-y-2"><Label className="text-xs font-bold uppercase tracking-wider">Nama Lengkap Sesuai KTP</Label>
+          <Input className="rounded-sm" value={form.nama} onChange={(e) => setForm({ ...form, nama: e.target.value })} placeholder="Contoh: Budi Santoso" /></div>
+        <div className="col-span-2 space-y-2"><Label className="text-xs font-bold uppercase tracking-wider">Email Aktif</Label>
+          <Input className="rounded-sm" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="nama@email.com" /></div>
+        <div className="col-span-2 space-y-2"><Label className="text-xs font-bold uppercase tracking-wider">Kata Sandi</Label>
+          <Input className="rounded-sm" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
+        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-wider">NIK (16 Digit)</Label>
+          <Input className="rounded-sm" inputMode="numeric" value={form.nik} onChange={(e) => setForm({ ...form, nik: e.target.value })} /></div>
+        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-wider">No. Telepon/WA</Label>
+          <Input className="rounded-sm" value={form.no_hp} onChange={(e) => setForm({ ...form, no_hp: e.target.value })} /></div>
+        <div className="col-span-2 space-y-2"><Label className="text-xs font-bold uppercase tracking-wider">Alamat Domisili</Label>
+          <Input className="rounded-sm" value={form.alamat} onChange={(e) => setForm({ ...form, alamat: e.target.value })} /></div>
       </div>
-      <Button type="submit" disabled={busy} className="w-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-95">
-        {busy && <Loader2 className="h-4 w-4 animate-spin" />} Daftar Sekarang
+      <Button type="submit" disabled={busy} className="w-full bg-primary font-bold shadow-solid hover:bg-primary/95">
+        {busy && <Loader2 className="h-4 w-4 animate-spin" />} BUAT AKUN SEKARANG
       </Button>
     </form>
   );
 }
+

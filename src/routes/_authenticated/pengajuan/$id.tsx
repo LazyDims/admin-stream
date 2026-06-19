@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatTanggal, sha256 } from "@/lib/sipelak";
 import { toast } from "sonner";
+import { Label } from "@radix-ui/react-label";
 
 export const Route = createFileRoute("/_authenticated/pengajuan/$id")({
   component: PengajuanDetail,
@@ -61,117 +62,154 @@ function PengajuanDetail() {
   };
 
   if (isLoading) return <div className="grid h-64 place-items-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>;
-  if (!data) return <p>Pengajuan tidak ditemukan.</p>;
+  if (!data) return <p className="p-8 text-center font-bold">DATA TIDAK DITEMUKAN</p>;
   const { p, dok } = data;
   const verifUrl = typeof window !== "undefined" ? `${window.location.origin}/verifikasi?token=${p.qr_token}` : "";
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      <Button asChild variant="ghost" size="sm"><Link to="/pengajuan"><ArrowLeft className="h-4 w-4" /> Kembali</Link></Button>
+    <div className="mx-auto max-w-5xl space-y-8">
+      <div className="flex items-center justify-between">
+        <Button asChild variant="ghost" size="sm" className="font-bold"><Link to="/pengajuan"><ArrowLeft className="h-4 w-4" /> KEMBALI</Link></Button>
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sistem Pemantauan Real-time</span>
+        </div>
+      </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
-          <Card className="border-border/60 p-6 shadow-soft">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="space-y-8 lg:col-span-2">
+          <Card className="border-border p-8 shadow-subtle">
+            <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-6 mb-8">
               <div className="min-w-0">
-                <p className="font-mono text-xs text-muted-foreground">{p.nomor}</p>
-                <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">{p.jenis_surat?.nama}</h1>
-                <p className="mt-1 text-sm text-muted-foreground">Diajukan {formatTanggal(p.created_at)}</p>
+                <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">{p.nomor}</p>
+                <h1 className="mt-2 font-sans text-3xl font-extrabold tracking-tight text-foreground">{p.jenis_surat?.nama}</h1>
+                <p className="mt-2 text-sm font-medium text-muted-foreground">Tanggal Registrasi: {formatTanggal(p.created_at)}</p>
               </div>
               <StatusBadge status={p.status} />
             </div>
 
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <Field label="Pemohon" value={p.profiles?.nama ?? "-"} />
-              <Field label="NIK" value={p.profiles?.nik ?? "-"} />
-              <Field label="No. HP" value={p.profiles?.no_hp ?? "-"} />
-              <Field label="Email" value={p.profiles?.email ?? "-"} />
-              <div className="sm:col-span-2"><Field label="Alamat" value={p.profiles?.alamat ?? "-"} /></div>
-              <div className="sm:col-span-2"><Field label="Keperluan" value={p.keperluan} /></div>
-              {p.catatan_petugas && <div className="sm:col-span-2"><Field label="Catatan Petugas" value={p.catatan_petugas} /></div>}
+            <div className="grid gap-6 sm:grid-cols-2">
+              <Field label="Nama Pemohon" value={p.profiles?.nama ?? "-"} />
+              <Field label="Nomor Induk Kependudukan" value={p.profiles?.nik ?? "-"} />
+              <Field label="Kontak Telepon" value={p.profiles?.no_hp ?? "-"} />
+              <Field label="Alamat Email" value={p.profiles?.email ?? "-"} />
+              <div className="sm:col-span-2"><Field label="Alamat Sesuai KTP" value={p.profiles?.alamat ?? "-"} /></div>
+              <div className="sm:col-span-2 border-t border-border pt-6 mt-2">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Deskripsi Keperluan</p>
+                <div className="mt-3 rounded border border-border bg-secondary/30 p-4">
+                  <p className="text-sm leading-relaxed font-medium">{p.keperluan}</p>
+                </div>
+              </div>
+              {p.catatan_petugas && (
+                <div className="sm:col-span-2 mt-2">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-destructive">Catatan dari Petugas</p>
+                  <div className="mt-3 rounded border border-destructive/20 bg-destructive/5 p-4">
+                    <p className="text-sm leading-relaxed font-semibold text-destructive">{p.catatan_petugas}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </Card>
 
-          <Card className="border-border/60 p-6 shadow-soft">
-            <h3 className="font-display text-lg font-bold">Dokumen Persyaratan</h3>
-            <div className="mt-3 divide-y divide-border">
-              {dok.length === 0 && <p className="py-4 text-sm text-muted-foreground">Tidak ada dokumen.</p>}
+          <Card className="border-border shadow-subtle">
+            <div className="border-b border-border p-6 bg-secondary/10">
+              <h3 className="font-sans text-lg font-bold flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" /> Berkas Persyaratan Terlampir
+              </h3>
+            </div>
+            <div className="p-6 divide-y divide-border">
+              {dok.length === 0 && <p className="py-8 text-center text-sm font-medium text-muted-foreground">Tidak ada lampiran berkas.</p>}
               {dok.map((d: any) => (
-                <div key={d.id} className="flex items-center justify-between gap-3 py-3">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <FileText className="h-4 w-4 shrink-0 text-primary" />
-                    <span className="truncate font-medium">{d.nama}</span>
+                <div key={d.id} className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0 group">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="grid h-10 w-10 place-items-center rounded bg-secondary text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate font-bold text-sm">{d.nama}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">File Dokumen</p>
+                    </div>
                   </div>
-                  <a href={d.file_url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">Buka</a>
+                  <Button asChild variant="outline" size="sm" className="font-bold">
+                    <a href={d.file_url} target="_blank" rel="noreferrer">LIHAT BERKAS</a>
+                  </Button>
                 </div>
               ))}
             </div>
           </Card>
 
           {isStaff && p.status !== "selesai" && p.status !== "ditolak" && (
-            <Card className="border-border/60 p-6 shadow-soft">
-              <h3 className="font-display text-lg font-bold">Aksi Petugas</h3>
-              <Textarea className="mt-3" value={catatan} onChange={(e) => setCatatan(e.target.value)} placeholder="Catatan (opsional untuk setujui, wajib untuk tolak)" rows={3} />
-              <div className="mt-3 flex flex-wrap gap-2">
+            <Card className="border-primary/20 border-2 p-8 shadow-solid">
+              <h3 className="font-sans text-xl font-extrabold tracking-tight border-b border-border pb-4 mb-6">Panel Kendali Petugas</h3>
+              <div className="space-y-4">
+                <Label className="text-xs font-bold uppercase tracking-wider">Berikan Catatan / Feedback</Label>
+                <Textarea className="rounded-sm border-border focus:ring-primary/20" value={catatan} onChange={(e) => setCatatan(e.target.value)} placeholder="Tuliskan catatan untuk warga jika diperlukan..." rows={3} />
+              </div>
+              <div className="mt-8 flex flex-wrap gap-3">
                 {p.status === "menunggu_verifikasi" && (
-                  <Button disabled={busy} onClick={() => updateStatus("diproses", catatan || undefined)} variant="outline">Tandai Diproses</Button>
+                  <Button disabled={busy} onClick={() => updateStatus("diproses", catatan || undefined)} variant="outline" className="font-bold px-6">Tandai Diproses</Button>
                 )}
-                <Button disabled={busy} onClick={() => updateStatus("disetujui", catatan || undefined)} className="bg-success text-success-foreground hover:bg-success/90">
-                  <CheckCircle2 className="h-4 w-4" /> Setujui
+                <Button disabled={busy} onClick={() => updateStatus("disetujui", catatan || undefined)} className="bg-success text-white font-bold hover:bg-success/90 px-6">
+                  <CheckCircle2 className="h-4 w-4" /> SETUJUI BERKAS
                 </Button>
-                <Button disabled={busy} onClick={() => updateStatus("selesai", catatan || undefined)} className="bg-gradient-hero text-primary-foreground hover:opacity-95">
-                  Terbitkan & Selesai
+                <Button disabled={busy} onClick={() => updateStatus("selesai", catatan || undefined)} className="bg-primary text-white font-bold hover:bg-primary/95 px-6 shadow-solid">
+                  TERBITKAN SURAT
                 </Button>
-                <Button disabled={busy || !catatan.trim()} onClick={() => updateStatus("ditolak", catatan)} variant="destructive">
-                  <XCircle className="h-4 w-4" /> Tolak
+                <Button disabled={busy || !catatan.trim()} onClick={() => updateStatus("ditolak", catatan)} variant="destructive" className="font-bold px-6">
+                  <XCircle className="h-4 w-4" /> TOLAK
                 </Button>
               </div>
             </Card>
           )}
         </div>
 
-        <div className="space-y-6">
-          <Card className="border-border/60 p-6 shadow-soft">
-            <h3 className="font-display text-lg font-bold">Verifikasi Dokumen</h3>
-            <p className="mt-1 text-xs text-muted-foreground">QR & hash hanya tersedia setelah surat selesai.</p>
+        <div className="space-y-8">
+          <Card className="border-border p-8 shadow-solid bg-card overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-2">
+              <div className="h-2 w-2 rounded-full bg-primary/20" />
+            </div>
+            <h3 className="font-sans text-lg font-bold border-b border-border pb-4 mb-6">Otentikasi Digital</h3>
             {p.status === "selesai" ? (
-              <div className="mt-4 space-y-3">
-                <div className="grid place-items-center rounded-xl bg-foreground p-6 text-background">
-                  <QrCode className="h-32 w-32" />
+              <div className="space-y-6">
+                <div className="grid place-items-center rounded border-2 border-dashed border-border bg-white p-8">
+                  <QrCode className="h-32 w-32 text-foreground" />
                 </div>
-                <div className="rounded-lg bg-secondary p-3 text-xs">
-                  <p className="text-muted-foreground">Token</p>
-                  <div className="flex items-center justify-between gap-2">
-                    <code className="truncate font-mono">{p.qr_token}</code>
-                    <button onClick={() => { navigator.clipboard.writeText(p.qr_token!); toast.success("Tersalin"); }}>
-                      <Copy className="h-3.5 w-3.5" />
-                    </button>
+                <div className="space-y-4">
+                  <div className="rounded border border-border bg-secondary/50 p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Digital Signature Token</p>
+                    <div className="mt-2 flex items-center justify-between gap-3">
+                      <code className="truncate font-mono text-xs font-bold text-primary">{p.qr_token}</code>
+                      <button className="text-muted-foreground hover:text-primary transition-colors" onClick={() => { navigator.clipboard.writeText(p.qr_token!); toast.success("Token tersalin"); }}>
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="rounded border border-border bg-secondary/50 p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">SHA-256 Integrity Hash</p>
+                    <code className="mt-2 block break-all font-mono text-[10px] leading-relaxed font-bold text-foreground">{p.hash_sha256}</code>
                   </div>
                 </div>
-                <div className="rounded-lg bg-secondary p-3 text-xs">
-                  <p className="text-muted-foreground">Hash SHA-256</p>
-                  <code className="break-all font-mono">{p.hash_sha256}</code>
-                </div>
-                <a href={verifUrl} target="_blank" rel="noreferrer">
-                  <Button variant="outline" className="w-full">Halaman Verifikasi Publik</Button>
-                </a>
-                <Button className="w-full bg-gradient-hero text-primary-foreground hover:opacity-95" onClick={() => window.print()}>
-                  <Download className="h-4 w-4" /> Cetak / Simpan PDF
+                <Button asChild variant="outline" className="w-full font-bold h-12">
+                  <a href={verifUrl} target="_blank" rel="noreferrer">HALAMAN VERIFIKASI PUBLIK</a>
+                </Button>
+                <Button className="w-full bg-primary text-white font-bold h-12 shadow-solid" onClick={() => window.print()}>
+                  <Download className="h-4 w-4" /> CETAK SURAT RESMI
                 </Button>
               </div>
             ) : (
-              <p className="mt-4 rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-                Surat belum diterbitkan.
-              </p>
+              <div className="py-12 text-center rounded border border-dashed border-border bg-secondary/10">
+                <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Menunggu Penerbitan</p>
+                <p className="mt-2 text-xs text-muted-foreground px-4 leading-relaxed">Fitur verifikasi akan aktif setelah pengajuan diselesaikan oleh petugas.</p>
+              </div>
             )}
           </Card>
 
-          <Card className="border-border/60 p-6 shadow-soft">
-            <h3 className="font-display text-lg font-bold">Linimasa</h3>
-            <ol className="mt-3 space-y-3 text-sm">
-              <TL label="Diajukan" t={p.created_at} active />
-              <TL label="Update terakhir" t={p.updated_at} active />
-              {p.completed_at && <TL label="Diterbitkan" t={p.completed_at} active />}
+          <Card className="border-border p-8 shadow-subtle">
+            <h3 className="font-sans text-lg font-bold border-b border-border pb-4 mb-6">Log Aktivitas</h3>
+            <ol className="relative space-y-6 border-l border-border ml-2">
+              <TL label="Registrasi Pengajuan" t={p.created_at} active />
+              <TL label="Pembaruan Terakhir" t={p.updated_at} active />
+              {p.completed_at && <TL label="Surat Diterbitkan" t={p.completed_at} active />}
             </ol>
           </Card>
         </div>
@@ -182,20 +220,20 @@ function PengajuanDetail() {
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className="mt-1 font-medium">{value}</p>
+    <div className="space-y-1">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="font-bold text-foreground">{value}</p>
     </div>
   );
 }
+
 function TL({ label, t, active }: { label: string; t: string; active?: boolean }) {
   return (
-    <li className="flex items-start gap-3">
-      <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${active ? "bg-primary" : "bg-border"}`} />
-      <div className="min-w-0">
-        <p className="font-medium">{label}</p>
-        <p className="text-xs text-muted-foreground">{formatTanggal(t)}</p>
-      </div>
+    <li className="ml-6 flex flex-col">
+      <span className={`absolute -left-[5px] h-2.5 w-2.5 rounded-full border-2 border-background ${active ? "bg-primary" : "bg-border"}`} />
+      <p className="font-bold text-sm leading-none">{label}</p>
+      <p className="mt-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{formatTanggal(t)}</p>
     </li>
   );
 }
+

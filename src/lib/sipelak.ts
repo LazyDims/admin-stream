@@ -1,9 +1,9 @@
 export const STATUS_LABEL: Record<string, { label: string; tone: string }> = {
-  menunggu_verifikasi: { label: "Menunggu Verifikasi", tone: "bg-warning/15 text-warning-foreground border border-warning/40" },
-  diproses: { label: "Diproses", tone: "bg-info/15 text-info border border-info/40" },
-  disetujui: { label: "Disetujui", tone: "bg-success/15 text-success border border-success/40" },
-  ditolak: { label: "Ditolak", tone: "bg-destructive/15 text-destructive border border-destructive/40" },
-  selesai: { label: "Selesai", tone: "bg-primary/15 text-primary border border-primary/40" },
+  menunggu_verifikasi: { label: "MENUNGGU VERIFIKASI", tone: "bg-warning/10 text-warning-foreground border-warning/20 border font-bold" },
+  diproses: { label: "SEDANG DIPROSES", tone: "bg-info/10 text-info border-info/20 border font-bold" },
+  disetujui: { label: "BERKAS DISETUJUI", tone: "bg-success/10 text-success border-success/20 border font-bold" },
+  ditolak: { label: "PENGAJUAN DITOLAK", tone: "bg-destructive/10 text-destructive border-destructive/20 border font-bold" },
+  selesai: { label: "SURAT TERBIT", tone: "bg-primary text-primary-foreground border-primary border font-bold" },
 };
 
 export function formatTanggal(s?: string | null) {

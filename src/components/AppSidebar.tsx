@@ -40,13 +40,13 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b">
         <Link to="/dashboard" className="flex items-center gap-2 px-2 py-3">
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gradient-hero text-primary-foreground shadow-soft">
-            <BadgeCheck className="h-5 w-5" />
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded bg-primary text-primary-foreground shadow-subtle">
+            <BadgeCheck className="h-6 w-6" />
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="truncate font-display text-base font-bold tracking-tight">SIPELAK</p>
-              <p className="truncate text-[10px] uppercase tracking-wider text-muted-foreground">Pelayanan Kecamatan</p>
+              <p className="truncate font-sans text-lg font-bold tracking-tight">SIPELAK</p>
+              <p className="truncate text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Pelayanan Kecamatan</p>
             </div>
           )}
         </Link>
