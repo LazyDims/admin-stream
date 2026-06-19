@@ -35,10 +35,12 @@ const NAV: Record<AppRole, { label: string; items: NavItem[] }> = {
     label: "Menu Admin",
     items: [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Kelola User", url: "/admin/users", icon: Users },
       { title: "Kelola Jenis Surat", url: "/admin/jenis-surat", icon: Settings2 },
       { title: "Verifikasi Pengajuan", url: "/petugas/pengajuan", icon: FileSearch },
       { title: "Audit Log", url: "/admin/audit", icon: ShieldCheck },
       { title: "Arsip Surat", url: "/arsip", icon: Archive },
+
     ],
   },
 };
