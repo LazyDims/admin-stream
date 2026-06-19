@@ -187,7 +187,7 @@ function AdminDashboard() {
       };
     },
   });
-  const s = data ?? { items: [], byStatus: {}, byJenis: {}, totalUsers: 0, totalJenis: 0, audit: [] as any[] };
+  const s = data ?? { items: [] as any[], byStatus: {} as Record<string, number>, byJenis: {} as Record<string, number>, totalUsers: 0, totalJenis: 0, audit: [] as any[] };
 
   return (
     <div className="space-y-8">
