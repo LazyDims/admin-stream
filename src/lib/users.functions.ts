@@ -10,7 +10,11 @@ export const listPetugas = createServerFn({ method: "GET" })
     });
     if (!isAdmin) throw new Error("Forbidden");
 
-    const { data: roleRows, error: rolesErr } = await context.supabase
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+
+    const { data: roleRows, error: rolesErr } = await supabaseAdmin
       .from("user_roles")
       .select("user_id")
       .eq("role", "petugas");
@@ -18,7 +22,7 @@ export const listPetugas = createServerFn({ method: "GET" })
     const ids = (roleRows ?? []).map((r) => r.user_id);
     if (ids.length === 0) return [];
 
-    const { data: profiles, error: pErr } = await context.supabase
+    const { data: profiles, error: pErr } = await supabaseAdmin
       .from("profiles")
       .select("id, nama, email, no_hp, nik, created_at")
       .in("id", ids);
@@ -108,5 +112,72 @@ export const deletePetugas = createServerFn({ method: "POST" })
     );
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const updatePetugas = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: {
+      userId: string;
+      email?: string;
+      password?: string;
+      nama?: string;
+      no_hp?: string;
+      nik?: string;
+    }) => {
+      if (!input.userId) {
+        throw new Error("User ID wajib diisi");
+      }
+      if (input.password && input.password.length < 6) {
+        throw new Error("Password minimal 6 karakter");
+      }
+      return input;
+    },
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+
+    const updateData: any = {};
+    if (data.email) updateData.email = data.email;
+    if (data.password) updateData.password = data.password;
+
+    const userMetadata: any = {};
+    if (data.nama) userMetadata.nama = data.nama;
+    if (data.no_hp !== undefined) userMetadata.no_hp = data.no_hp;
+    if (data.nik !== undefined) userMetadata.nik = data.nik;
+
+    if (Object.keys(userMetadata).length > 0) {
+      updateData.user_metadata = userMetadata;
+    }
+
+    const { error: authErr } = await supabaseAdmin.auth.admin.updateUserById(
+      data.userId,
+      updateData
+    );
+    if (authErr) throw new Error(authErr.message);
+
+    const profileUpdate: any = {};
+    if (data.nama) profileUpdate.nama = data.nama;
+    if (data.email) profileUpdate.email = data.email;
+    if (data.no_hp !== undefined) profileUpdate.no_hp = data.no_hp;
+    if (data.nik !== undefined) profileUpdate.nik = data.nik;
+
+    if (Object.keys(profileUpdate).length > 0) {
+      const { error: profileErr } = await supabaseAdmin
+        .from("profiles")
+        .update(profileUpdate)
+        .eq("id", data.userId);
+      if (profileErr) throw new Error(profileErr.message);
+    }
+
     return { ok: true };
   });

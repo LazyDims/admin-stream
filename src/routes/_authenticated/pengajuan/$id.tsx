@@ -230,7 +230,7 @@ function Field({ label, value }: { label: string; value: string }) {
 function TL({ label, t, active }: { label: string; t: string; active?: boolean }) {
   return (
     <li className="ml-6 flex flex-col">
-      <span className={`absolute -left-[5px] h-2.5 w-2.5 rounded-full border-2 border-background ${active ? "bg-primary" : "bg-border"}`} />
+      <span className={`absolute -left-1.25 h-2.5 w-2.5 rounded-full border-2 border-background ${active ? "bg-primary" : "bg-border"}`} />
       <p className="font-bold text-sm leading-none">{label}</p>
       <p className="mt-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{formatTanggal(t)}</p>
     </li>

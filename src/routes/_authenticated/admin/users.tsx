@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Plus, Trash2, Loader2, UserPlus } from "lucide-react";
+import { Plus, Trash2, Loader2, UserPlus, Pencil } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
   createPetugas,
   deletePetugas,
   listPetugas,
+  updatePetugas,
 } from "@/lib/users.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
@@ -27,8 +35,25 @@ function AdminUsers() {
   const fnList = useServerFn(listPetugas);
   const fnCreate = useServerFn(createPetugas);
   const fnDelete = useServerFn(deletePetugas);
+  const fnUpdate = useServerFn(updatePetugas);
 
   const [form, setForm] = useState({
+    nama: "",
+    email: "",
+    password: "",
+    no_hp: "",
+    nik: "",
+  });
+
+  const [editingPetugas, setEditingPetugas] = useState<null | {
+    id: string;
+    nama: string;
+    email: string;
+    no_hp: string | null;
+    nik: string | null;
+  }>(null);
+
+  const [editForm, setEditForm] = useState({
     nama: "",
     email: "",
     password: "",
@@ -47,6 +72,23 @@ function AdminUsers() {
     onSuccess: () => {
       toast.success("Akun petugas berhasil dibuat");
       setForm({ nama: "", email: "", password: "", no_hp: "", nik: "" });
+      qc.invalidateQueries({ queryKey: ["admin-petugas"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const updateMut = useMutation({
+    mutationFn: (payload: {
+      userId: string;
+      email?: string;
+      password?: string;
+      nama?: string;
+      no_hp?: string;
+      nik?: string;
+    }) => fnUpdate({ data: payload }),
+    onSuccess: () => {
+      toast.success("Akun petugas berhasil diperbarui");
+      setEditingPetugas(null);
       qc.invalidateQueries({ queryKey: ["admin-petugas"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -75,6 +117,44 @@ function AdminUsers() {
       return;
     }
     createMut.mutate(form);
+  };
+
+  const startEdit = (p: any) => {
+    setEditingPetugas(p);
+    setEditForm({
+      nama: p.nama,
+      email: p.email,
+      password: "",
+      no_hp: p.no_hp ?? "",
+      nik: p.nik ?? "",
+    });
+  };
+
+  const submitEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPetugas) return;
+    if (!editForm.nama || !editForm.email) {
+      toast.error("Nama dan email wajib diisi");
+      return;
+    }
+
+    const payload: any = {
+      userId: editingPetugas.id,
+      nama: editForm.nama,
+      email: editForm.email,
+      no_hp: editForm.no_hp || null,
+      nik: editForm.nik || null,
+    };
+
+    if (editForm.password) {
+      if (editForm.password.length < 6) {
+        toast.error("Password minimal 6 karakter");
+        return;
+      }
+      payload.password = editForm.password;
+    }
+
+    updateMut.mutate(payload);
   };
 
   const hapus = (id: string, nama: string) => {
@@ -200,7 +280,15 @@ function AdminUsers() {
                     <td className="px-4 py-3 text-muted-foreground">
                       {p.no_hp ?? "-"}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => startEdit(p)}
+                        disabled={deleteMut.isPending}
+                      >
+                        <Pencil className="h-4 w-4 text-muted-foreground" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -217,6 +305,85 @@ function AdminUsers() {
           </div>
         </Card>
       </div>
+
+      {editingPetugas && (
+        <Dialog open={!!editingPetugas} onOpenChange={(open) => !open && setEditingPetugas(null)}>
+          <DialogContent className="sm:max-w-106.25">
+            <DialogHeader>
+              <DialogTitle>Edit Akun Petugas</DialogTitle>
+              <DialogDescription>
+                Perbarui informasi akun petugas atau ubah password.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={submitEdit} className="space-y-4 pt-2">
+              <div>
+                <Label>Nama Lengkap *</Label>
+                <Input
+                  value={editForm.nama}
+                  onChange={(e) => setEditForm({ ...editForm, nama: e.target.value })}
+                  placeholder="Nama petugas"
+                />
+              </div>
+              <div>
+                <Label>Email *</Label>
+                <Input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                  placeholder="petugas@kecamatan.go.id"
+                />
+              </div>
+              <div>
+                <Label>Password Baru (Kosongkan jika tidak diubah)</Label>
+                <Input
+                  type="password"
+                  value={editForm.password}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, password: e.target.value })
+                  }
+                  placeholder="Minimal 6 karakter"
+                />
+              </div>
+              <div>
+                <Label>NIK</Label>
+                <Input
+                  value={editForm.nik}
+                  onChange={(e) => setEditForm({ ...editForm, nik: e.target.value })}
+                  placeholder="Opsional"
+                />
+              </div>
+              <div>
+                <Label>No. HP</Label>
+                <Input
+                  value={editForm.no_hp}
+                  onChange={(e) => setEditForm({ ...editForm, no_hp: e.target.value })}
+                  placeholder="Opsional"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setEditingPetugas(null)}
+                >
+                  Batal
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={updateMut.isPending}
+                  className="bg-gradient-hero text-primary-foreground hover:opacity-95"
+                >
+                  {updateMut.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Simpan Perubahan"
+                  )}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
